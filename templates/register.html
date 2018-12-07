@@ -1,0 +1,12 @@
+{% extends "bootstrap/base.html" %}
+
+{%from "bootstrap/wtf.html" import quick_form %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">Welcome to happy {{test}}!</h1>
+    <div class="container">
+        {{quick_form(form)}}
+    </div>
+{% endblock %}
