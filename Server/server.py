@@ -1,12 +1,14 @@
 import redis
 from flask import Flask, request, abort, jsonify, redirect, url_for, flash, render_template
-from flask_login import LoginManager, current_user, login_user, login_required
+from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_bootstrap import Bootstrap
 
 from auth import User, RegistrationForm, LoginForm
 from model import CardBox
+from flask_table import Table, Col, ButtonCol, LinkCol
 
 import utils
+from display import CardBoxTable, FilterForm
 
 
 app = Flask(__name__)
@@ -19,8 +21,6 @@ login_manager = LoginManager(app)
 Bootstrap(app)
 
 
-OWNER = 'herbert'
-
 # TODO: improve error code responses
 
 
@@ -30,6 +30,71 @@ def index():
     if current_user.is_authenticated:
         return render_template('welcome.html')
     return render_template('index.html')
+
+
+@app.route('/cardboxes/<_id>')
+@login_required
+def show_box(_id):
+    box = CardBox.fetch(db, _id)
+
+    if not box:
+        flash('not box', 'error')
+        return redirect(url_for('index'))
+
+    return render_template('show_box.html', box=box)
+
+
+@app.route('/cardboxes', methods=['POST', 'GET'])
+@login_required
+def huge_list():
+
+    args = request.args
+
+    sort_key = args.get('sort') or 'rating'
+    sort_direction = args.get('direction')
+
+    if not sort_direction:
+        sort_direction = True
+    else:
+        sort_direction = sort_direction == 'desc'
+
+    filter_option = args.get('foption')
+    filter_term = args.get('fterm')
+
+    form = FilterForm()
+    if form.validate_on_submit():
+        filter_option = form.option.data
+        filter_term = form.term.data
+
+        kwargs = {key: value for key, value in args.items()}
+        kwargs.update(foption=filter_option, fterm=filter_term)
+
+        return redirect(url_for('huge_list', **kwargs))
+
+    form.term.data = filter_term
+    filter_option = filter_option or 'tags'
+    form.option.data = filter_option
+
+    def sort_key_of(box):
+        if sort_key == 'name':
+            return box.name.lower()
+
+        return getattr(box, sort_key)
+
+    cardboxes = CardBox.fetch_all(db)
+
+    if filter_term:
+        cardboxes = [c for c in cardboxes
+                     if filter_term in getattr(c, filter_option)]
+
+    if sort_key and cardboxes and hasattr(cardboxes[0], sort_key):
+        cardboxes.sort(key=sort_key_of, reverse=sort_direction)
+    else:
+        sort_key = None
+
+    table = CardBoxTable(cardboxes, sort_reverse=sort_direction, sort_by=sort_key)
+
+    return render_template('huge_list.html', table=table, filter_form=form)
 
 
 @app.route('/cardboxes/<_id>/rate')
@@ -45,13 +110,14 @@ def rate_cardbox(_id):
     if box.increment_rating(db, current_user):
         flash('u succ(ess)')
         # TODO return to /carboxes/<_id>
-        return redirect(url_for('index'))
+        return redirect(url_for('show_box', _id=_id))
 
-    flash("Already rated. Don't try to fool us!")
+    flash("Already rated. Don't try to fool us!", 'error')
     # TODO return to /carboxes/<_id>
-    return redirect(url_for('index'))
+    return redirect(url_for('show_box', _id=_id))
 
 
+# TODO filter malevolent input
 @app.route('/add_cardbox', methods=['POST'])
 def add_cardbox():
     if not request.is_json:
@@ -128,6 +194,14 @@ def login():
         return redirect(url_for('index'))
 
     return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logout succ')
+    return redirect(url_for('index'))
 
 
 @login_manager.user_loader

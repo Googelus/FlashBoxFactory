@@ -7,9 +7,16 @@
 {% block content %}
 <h1 class="text-center">Hello {{current_user._id}}!</h1>
 
+<div class="text-center">
+    <div class=container>
+        <div class="btn-group btn-group-justified">
+            <a href="{{url_for('huge_list')}}" class="btn btn-success btn-lg" role="button">Explore!</a>
+        </div>
+        <br>
+        <br>
+        <p>{{current_user._id}} ded? <a href="{{url_for('logout')}}" class="btn btn-primary btn-md" role="button">Logout</a></p>
+    </div>
+</div>
 {{flashed_messages(container=True)}}
-
-<!-- <div class="container">    
-</div> -->
 
 {% endblock %}

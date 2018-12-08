@@ -1,0 +1,28 @@
+{% extends "bootstrap/base.html" %}
+
+{% from "bootstrap/utils.html" import flashed_messages %}
+
+{% block title %}Box: {{box.name}}{% endblock %}
+
+{% block content %}
+<h2 class="text-center">{{box.name}}</h2>
+
+<div class="text-center">
+    <br>
+    <p>by {{box.owner}}</p>
+    <br>
+    <p>Tags:<br>
+        <ul class="list-inline">
+            {% for tag in box.tags %}
+              <li class="list-group-item">{{tag}}</li>
+            {% endfor %}
+        </ul></p>
+    <br>
+    <p>Rating: {{box.rating}} <a href="{{url_for('rate_cardbox', _id=box._id)}}" class="btn btn-primary btn-md" role="button">Upvote!</a></p>
+    <br>
+    <h3>No Description feature added yet. No content display feature added yet.</h3>
+</div>
+
+{{flashed_messages(container=True)}}
+
+{% endblock %}

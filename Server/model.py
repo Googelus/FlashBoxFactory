@@ -61,3 +61,16 @@ class CardBox:
 
         _dict = utils.unjsonify(json_string)
         return CardBox(**_dict)
+
+    # TODO Add correct implementation that does not crash with too many users.
+    @staticmethod
+    def fetch_all(db):
+        dict_json_boxes = db.hgetall(TABLE_CARDBOXES)
+
+        if not dict_json_boxes:
+            return []
+
+        boxes = [CardBox(**utils.unjsonify(d))
+                 for d in dict_json_boxes.values()]
+
+        return boxes
