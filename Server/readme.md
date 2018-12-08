@@ -1,10 +1,17 @@
 # Server:
 
-- !- Authentification:
-  - Create Account
-  - Login
+- [x] Authentification:
+  - [x] Create Account
+  - [x] Login
+  - [x] Protect upload routine
 
-- !- Set-List
+- [x] Download von Sets
+
+- [x] Upload von Sets
+
+- [x] Rating System von Sets
+
+- Set-List:
   - Sortieren nach: Rating
   - Filtern nach: Tags
   - Suchen nach Name
@@ -13,29 +20,38 @@
   - Suchen nach Name
   - (Sortieren nach Rating)
 
-- !- Database-Integration:
-  - Objekte:
-  - Sets: ID, Owner, Tags, Rating, Content (+/- Description)
-  - User: ID, Password(?), Sets, (Rating, Exhibition Objects)
-
-- !- Downloads & Uploads von Sets
-
-- Rating System von Sets
+- [x] Database-Integration:
+  - [x] Sets:
+    - [x] ID (Serverside)
+    - [x] Keep name 
+    - [x] Owner
+    - [x] Tags
+    - [x] Rating
+    - [x] Content
+    - (+/- Description)
+  - [x] User:
+    - [x] ID
+    - [x] Password (hashed)
+    - [x] Sets
+    - [x] List of rated Sets
+    - (Rating)
+    - (ExP / Meta Information)
+    - (Exhibition Objects)
 
 - User-Account-Management:
   - Password
   - (Delete/Change Sets)
   - (Exhibition Objects)
 
-- (!- VS-Mode)
+- (VS-Mode)
 
-- (- Rating System von Users
+- (Rating System von Users
   - Define Rating
   - "Scoreboard")
 
-- !- Pages:
+- Pages:
   - Set-List
-  - Login & Creation
+  - [x] Login & Creation
   - User-List
   - Set-Display
   - User-Display
