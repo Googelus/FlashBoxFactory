@@ -1,0 +1,15 @@
+{% extends "bootstrap/base.html" %}
+
+{% from "bootstrap/utils.html" import flashed_messages %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Hello {{current_user._id}}!</h1>
+
+{{flashed_messages(container=True)}}
+
+<!-- <div class="container">    
+</div> -->
+
+{% endblock %}

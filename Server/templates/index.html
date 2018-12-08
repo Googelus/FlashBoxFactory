@@ -1,0 +1,24 @@
+{% extends "bootstrap/base.html" %}
+
+{% from "bootstrap/utils.html" import flashed_messages %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Hello there!</h1>
+
+{{flashed_messages(container=True)}}
+
+<div class="text-center">
+    <br>
+    <br>
+    <p><a href="{{ url_for('login') }}">Login!</a></p>
+    <p>New User? <a href="{{ url_for('register') }}">Register!</a></p>   
+
+<!--
+    <a href="#" role="button" class="btn btn-primary">
+       Examples
+    </a> -->
+</div>
+
+{% endblock %}

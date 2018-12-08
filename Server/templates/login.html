@@ -1,0 +1,19 @@
+{% extends "bootstrap/base.html" %}
+
+{% from "bootstrap/wtf.html" import quick_form %}
+{% from "bootstrap/utils.html" import flashed_messages %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Welcome to login!</h1>
+
+<div class="container">
+    {{quick_form(form)}}
+    <br>
+    <br>
+    {{flashed_messages(container=False)}}
+</div>
+
+
+{% endblock %}

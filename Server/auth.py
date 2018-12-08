@@ -10,19 +10,22 @@ TABLE_USER = 'users'
 
 
 class User:
-    def __init__(self, _id: str, password_hash=None, cardboxs=[]):
 
-        self.id = _id
+    def __init__(self, _id: str, password_hash=None, cardboxs=[], rated=[],
+                 is_active=None, is_authenticated=None, is_anonymous=None):
+
+        self._id = _id
         # self.rating = rating
         self.password_hash = password_hash
         self.cardboxs = cardboxs
+        self.rated = rated
 
         self.is_active = True
         self.is_authenticated = True
         self.is_anonymous = False
 
     def get_id(self) -> str:
-        return self.id
+        return self._id
 
     def set_password(self, password_plain: str):
         self.password_hash = generate_password_hash(password_plain)
@@ -31,7 +34,7 @@ class User:
         return check_password_hash(self.password_hash, password_plain)
 
     def store(self, db):
-        db.hset(TABLE_USER, self.id, utils.jsonify(self))
+        db.hset(TABLE_USER, self._id, utils.jsonify(self))
 
     @staticmethod
     def fetch(db, user_id: str):
@@ -49,6 +52,7 @@ class User:
 
 
 class RegistrationForm(FlaskForm):
+
     def __init__(self, db, **kwargs):
         super().__init__(**kwargs)
         self.db = db
@@ -71,3 +75,26 @@ class RegistrationForm(FlaskForm):
 
         if user:
             raise ValidationError('Username is already taken.')
+
+
+class LoginForm(FlaskForm):
+
+    def __init__(self, db, **kwargs):
+        super().__init__(**kwargs)
+        self.db = db
+
+    username = StringField('Username',
+                           validators=[DataRequired(),
+                                       Length(min=3, max=16)])
+    password = PasswordField('Password',
+                             validators=[DataRequired(),
+                                         Length(min=6, max=32)])
+    submit = SubmitField('Go!')
+
+    # auto-invoked by WTForms
+    def validate_username(self, username):
+
+        user = User.exists(self.db, username.data)
+
+        if not user:
+            raise ValidationError('User does NOT exist. Mostly.')
