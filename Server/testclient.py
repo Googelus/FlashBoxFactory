@@ -5,13 +5,23 @@ import requests
 import string
 import redis
 
+# A test client to check out multiple functionalities
+# of the server and get data to the server
+
+# Existing Users:
+# herbert - bierbauch
+# DER MARKUS - wurstbrot
+# a a a a a - superfail
+# buddha-man - jadejade
+# weirdpedo - raeploli
+# More
 
 TAGS = ['weiblicher_darsteller', 'epischer_soundtrack', 'beume', 'side_scroller',
         'adventure', 'tofu', 'cheese', 'more cheese', 'hanamura', 'both_ends_count',
         'ganondorf', 'loliraep']
 
-USER = 'herbert'  # 'a a a a a'  #
-PASSWORD = 'bierbauch'  # 'superfail'  #
+USER = 'herbert'
+PASSWORD = 'bierbauch'
 
 
 def create_many_boxes(username, password, number=100):
