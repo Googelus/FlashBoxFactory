@@ -5,11 +5,18 @@
 {% block title %}Box: {{box.name}}{% endblock %}
 
 {% block content %}
-<h2 class="text-center">{{box.name}}</h2>
 
 <div class="text-center">
+    <h2>{{box.name}}</h2>
+    <div class="btn-group">
+            <a href="{{url_for('huge_list')}}" class="btn btn-primary btn-md" role="button">Back to explore</a>
+            <a href="{{url_for('prepare_download', _id=box._id)}}" class="btn btn-primary btn-md" role="button">Download!</a></h2>            
+    </div>
+</div>
+
+<div class="text-center">    
     <br>
-    <p>by {{box.owner}}</p>
+    <p>by <a href="{{url_for('show_user', _id=box.owner)}}">{{box.owner}}</a></p>
     <br>
     <p>Tags:<br>
         <ul class="list-inline">

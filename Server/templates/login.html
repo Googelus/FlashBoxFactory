@@ -8,12 +8,12 @@
 {% block content %}
 <h1 class="text-center">Welcome to login!</h1>
 
+{{flashed_messages(container=True)}}
+
 <div class="container">
     {{quick_form(form)}}
     <br>
-    <br>
-    {{flashed_messages(container=False)}}
+    <a href="{{url_for('register')}}" class="btn btn-primary btn-md" role="button">New Guy?</a>
 </div>
-
 
 {% endblock %}

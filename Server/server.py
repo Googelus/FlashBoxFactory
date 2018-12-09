@@ -1,13 +1,15 @@
-import redis
-from flask import Flask, request, abort, jsonify, redirect, url_for, flash, render_template
-from flask_login import LoginManager, current_user, login_user, login_required, logout_user
-from flask_bootstrap import Bootstrap
+import os
 
-from auth import User, RegistrationForm, LoginForm
-from model import CardBox
+import redis
+from flask import Flask, request, redirect, url_for, flash, render_template, send_from_directory, abort, jsonify
+from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask_table import Table, Col, ButtonCol, LinkCol
+from flask_bootstrap import Bootstrap
+from werkzeug.urls import url_parse
 
 import utils
+from model import CardBox
+from auth import User, RegistrationForm, LoginForm
 from display import CardBoxTable, FilterForm
 
 
@@ -17,7 +19,11 @@ app.secret_key = ('34c059badbbd38455b4eb44865c25303'
 
 db = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+# configure Login Manager:
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'who dis?'
+
 Bootstrap(app)
 
 
@@ -32,6 +38,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
+
+
 @app.route('/cardboxes/<_id>')
 @login_required
 def show_box(_id):
@@ -39,11 +50,27 @@ def show_box(_id):
 
     if not box:
         flash('not box', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('huge_list'))
 
     return render_template('show_box.html', box=box)
 
 
+@app.route('/user/<_id>')
+@login_required
+def show_user(_id):
+    user = User.fetch(db, _id)
+
+    if not user:
+        flash('not user', 'error')
+        return redirect(url_for('index'))
+
+    if user._id == current_user._id:
+        return render_template('show_user_myself.html', user=user)
+
+    return render_template('show_user.html', user=user)
+
+
+# TODO make more readable and fix minor sorting bugs
 @app.route('/cardboxes', methods=['POST', 'GET'])
 @login_required
 def huge_list():
@@ -52,6 +79,7 @@ def huge_list():
 
     sort_key = args.get('sort') or 'rating'
     sort_direction = args.get('direction')
+    page = int(args.get('page')) if args.get('page') else 1
 
     if not sort_direction:
         sort_direction = True
@@ -67,7 +95,7 @@ def huge_list():
         filter_term = form.term.data
 
         kwargs = {key: value for key, value in args.items()}
-        kwargs.update(foption=filter_option, fterm=filter_term)
+        kwargs.update(foption=filter_option, fterm=filter_term, page=1)
 
         return redirect(url_for('huge_list', **kwargs))
 
@@ -92,9 +120,27 @@ def huge_list():
     else:
         sort_key = None
 
-    table = CardBoxTable(cardboxes, sort_reverse=sort_direction, sort_by=sort_key)
+    pagination = utils.Pagination(parent=cardboxes,
+                                  page=page,
+                                  per_page=50,
+                                  total_count=len(cardboxes))
 
-    return render_template('huge_list.html', table=table, filter_form=form)
+    kwargs = {key: value for key, value in args.items()}
+    kwargs.update(page=page, foption=filter_option,
+                  direction=sort_direction)
+
+    pag_kwargs = dict(pagination=pagination, endpoint='huge_list',
+                      prev='<', next='>', ellipses='...', size='lg',
+                      args=kwargs)
+
+    table = CardBoxTable(pagination.items,
+                         sort_reverse=sort_direction,
+                         sort_by=sort_key)
+
+    return render_template('huge_list.html',
+                           table=table,
+                           filter_form=form,
+                           pagination_kwargs=pag_kwargs)
 
 
 @app.route('/cardboxes/<_id>/rate')
@@ -142,7 +188,14 @@ def add_cardbox():
 
         user.cardboxs.append(new_box._id)
 
+        user.store(db)
+
     return 'OK'
+
+
+@app.route('/cardboxes/<_id>/prepare-download')
+def prepare_download(_id: str):
+    return render_template('prepare_download.html', box_id=_id)
 
 
 @app.route('/cardboxes/<_id>/download', methods=['GET'])
@@ -191,7 +244,15 @@ def login():
         login_user(user)
 
         flash('Login succ!')
-        return redirect(url_for('index'))
+
+        # flask_login.LoginManager sets 'next' url Argument by default.
+        next_page = request.args.get('next')
+
+        # Additional check if address is relative (no netloc component).
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+
+        return redirect(next_page)
 
     return render_template('login.html', form=form)
 

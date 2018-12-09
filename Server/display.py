@@ -10,7 +10,7 @@ class CardBoxTable(Table):
 
     name = LinkCol('Name', endpoint='show_box', url_kwargs=dict(_id='_id'), attr_list='name')
     tags = Col('Tags', allow_sort=False)
-    owner = Col('Owner')
+    owner = LinkCol('Owner', endpoint='show_user', url_kwargs=dict(_id='owner'), attr_list='owner')
     rating = Col('Rating')
 
     allow_sort = True

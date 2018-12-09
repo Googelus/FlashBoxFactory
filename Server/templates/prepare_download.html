@@ -1,0 +1,16 @@
+{% extends "bootstrap/base.html" %}
+
+{% from "bootstrap/utils.html" import flashed_messages %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="text-center">You may look at this!</h1>
+
+<div class="text-center">
+<a href="{{url_for('show_box', _id=box_id)}}" class="btn btn-primary btn-md" role="button">Proceed!</a>
+</div>
+
+{{flashed_messages(container=True)}}
+
+{% endblock %}

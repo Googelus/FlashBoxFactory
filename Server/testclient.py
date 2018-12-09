@@ -10,8 +10,8 @@ TAGS = ['weiblicher_darsteller', 'epischer_soundtrack', 'beume', 'side_scroller'
         'adventure', 'tofu', 'cheese', 'more cheese', 'hanamura', 'both_ends_count',
         'ganondorf', 'loliraep']
 
-USER = 'herbert'
-PASSWORD = 'bierbauch'
+USER = 'herbert'  # 'a a a a a'  #
+PASSWORD = 'bierbauch'  # 'superfail'  #
 
 
 def create_many_boxes(username, password, number=100):
@@ -33,13 +33,21 @@ def create_sample_box(username, password, name, tags, content):
     r = requests.post('http://localhost:5000/add_cardbox', json=payload)
 
 
+def test_download():
+    r = requests.get(
+        'http://localhost:5000/cardboxes/iqPLZZxkQKeAYEIWBVyDgA==/download')
+    print(r.content)
+
+
 def print_boxes():
     db = redis.StrictRedis(host='localhost', port=6379, db=0)
     print(db.hgetall('cardboxs'))
 
 
 def main():
-    create_many_boxes(USER, PASSWORD)
+    create_many_boxes(USER, PASSWORD, 15)
+    # test_download()
+
 
 if __name__ == "__main__":
     main()

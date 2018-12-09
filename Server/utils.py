@@ -1,4 +1,5 @@
 import json
+import math
 
 
 def unjsonify(json_string: str):
@@ -46,7 +47,7 @@ class Pagination:
 
     @property
     def pages(self):
-        return int(self.total_count // self.per_page)
+        return int(math.ceil(self.total_count / self.per_page))
 
     @property
     def has_prev(self):

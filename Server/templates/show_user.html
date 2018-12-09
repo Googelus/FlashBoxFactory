@@ -1,0 +1,24 @@
+{% extends "bootstrap/base.html" %}
+
+{% from "bootstrap/utils.html" import flashed_messages %}
+
+{% block title %}User: {{user._id}}{% endblock %}
+
+{% block content %}
+<p class="container">profile-pic</p>
+<h2 class="container">{{user._id}}</h2>
+<h3 class="container">Here you can look at all his stuff.<br>
+    Like Achievements!</h3>
+
+<div class="container">
+    <h3>Uploaded Boxes</h3>
+    <ul class="list-group">
+        {% for box_id in user.cardboxs %}
+        <a href="{{url_for('show_box', _id=box_id)}}" class="list-group-item">{{box_id}}</a>
+        {% endfor %}
+    </ul>
+</div>
+
+{{flashed_messages(container=True)}}
+
+{% endblock %}

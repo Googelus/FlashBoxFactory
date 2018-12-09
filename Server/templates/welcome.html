@@ -7,8 +7,11 @@
 {% block content %}
 <h1 class="text-center">Hello {{current_user._id}}!</h1>
 
-<div class="text-center">
-    <div class=container>
+<div class="container">
+    <a href="{{url_for('show_user', _id=current_user._id)}}" class="btn btn-primary btn-md" role="button">Show Profile</a>
+    <br>
+    <br>
+    <div class="text-center">        
         <div class="btn-group btn-group-justified">
             <a href="{{url_for('huge_list')}}" class="btn btn-success btn-lg" role="button">Explore!</a>
         </div>
