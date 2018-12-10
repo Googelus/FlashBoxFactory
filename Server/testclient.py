@@ -8,20 +8,14 @@ import redis
 # A test client to check out multiple functionalities
 # of the server and get data to the server
 
-# Existing Users:
-# herbert - bierbauch
-# DER MARKUS - wurstbrot
-# a a a a a - superfail
-# buddha-man - jadejade
-# weirdpedo - raeploli
-# More
+TAGS = ['maths', 'physics', 'chemistry', 'music', 'history', 'silent_movies',
+        'food', 'gaming', 'star_wars', 'death_star', 'traitor', 'hello_there',
+        'donald_trump', 'buddha', 'the_purge', 'veganism', 'john_cena',
+        'elon_musk', 'cybervalley', 'exodia', 'cheese', 'more_cheese', '1984',
+        'Mr.Robot', 'owo', ':D', 'insert tag here', 'Hääyöaieuutinen']
 
-TAGS = ['weiblicher_darsteller', 'epischer_soundtrack', 'beume', 'side_scroller',
-        'adventure', 'tofu', 'cheese', 'more cheese', 'hanamura', 'both_ends_count',
-        'ganondorf', 'loliraep']
-
-USER = 'herbert'
-PASSWORD = 'bierbauch'
+USER = 'Obi_wan_Kenobi'
+PASSWORD = 'highground'
 
 
 def create_many_boxes(username, password, number=100):

@@ -8,9 +8,11 @@ class CardBoxTable(Table):
 
     classes = ['table', 'table-hover', 'table-bordered']
 
-    name = LinkCol('Name', endpoint='show_box', url_kwargs=dict(_id='_id'), attr_list='name')
+    name = LinkCol('Name', endpoint='show_box',
+                   url_kwargs=dict(_id='_id'), attr_list='name')
     tags = Col('Tags', allow_sort=False)
-    owner = LinkCol('Owner', endpoint='show_user', url_kwargs=dict(_id='owner'), attr_list='owner')
+    owner = LinkCol('Owner', endpoint='show_user',
+                    url_kwargs=dict(_id='owner'), attr_list='owner')
     rating = Col('Rating')
 
     allow_sort = True
@@ -20,12 +22,13 @@ class CardBoxTable(Table):
 
         kwargs = {key: value for key, value in request.args.items()}
         kwargs.update(direction=direction, sort=col_key)
-    
+
         return url_for('huge_list', **kwargs)
 
 
 class FilterForm(FlaskForm):
 
-    option = RadioField('', choices=[('tags', 'Tags'), ('owner', 'Username')], default='tags')
+    option = RadioField(
+        '', choices=[('tags', 'Tags'), ('owner', 'Username')], default='tags')
     term = StringField('Filter Term')
-    submit = SubmitField('Filthy!')
+    submit = SubmitField('Filter!')

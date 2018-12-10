@@ -22,7 +22,7 @@ db = redis.StrictRedis(host='localhost', port=6379, db=0)
 # configure Login Manager:
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-login_manager.login_message = 'who dis?'
+login_manager.login_message = 'You must be logged in to access this page.'
 
 Bootstrap(app)
 
@@ -49,7 +49,7 @@ def show_box(_id):
     box = CardBox.fetch(db, _id)
 
     if not box:
-        flash('not box', 'error')
+        flash('Invalid Cardbox ID.', 'error')
         return redirect(url_for('huge_list'))
 
     return render_template('show_box.html', box=box)
@@ -61,7 +61,8 @@ def show_user(_id):
     user = User.fetch(db, _id)
 
     if not user:
-        flash('not user', 'error')
+        flash('Invalid User Name.'
+              'Be the first User to have this name! :D', 'error')
         return redirect(url_for('index'))
 
     if user._id == current_user._id:
@@ -106,6 +107,8 @@ def huge_list():
     def sort_key_of(box):
         if sort_key == 'name':
             return box.name.lower()
+        if sort_key == 'owner':
+            return box.owner.lower()
 
         return getattr(box, sort_key)
 
@@ -149,12 +152,12 @@ def rate_cardbox(_id):
     box = CardBox.fetch(db, _id)
 
     if not box:
-        flash('not box')
+        flash('Invalid Cardbox ID.', 'error')
         # TODO return to /carboxes/<_id>
         return redirect(url_for('index'))
 
     if box.increment_rating(db, current_user):
-        flash('u succ(ess)')
+        flash('Successfully rated. Thank you for your appreciation! :3')
         # TODO return to /carboxes/<_id>
         return redirect(url_for('show_box', _id=_id))
 
@@ -221,7 +224,8 @@ def register():
 
         user.store(db)
 
-        flash('Successfully placed forehead to release soul!')
+        flash("Accont creation successful."
+              "Welcome to our happy lil' community!")
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
@@ -243,7 +247,7 @@ def login():
 
         login_user(user)
 
-        flash('Login succ!')
+        flash('Login successful!')
 
         # flask_login.LoginManager sets 'next' url Argument by default.
         next_page = request.args.get('next')
@@ -261,7 +265,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Logout succ')
+    flash('Logout successful. See you soon!')
     return redirect(url_for('index'))
 
 

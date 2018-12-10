@@ -49,7 +49,7 @@ class CardBox:
 
         self.store(db)
 
-        # succ
+        # success
         return True
 
     @staticmethod
@@ -62,7 +62,7 @@ class CardBox:
         _dict = utils.unjsonify(json_string)
         return CardBox(**_dict)
 
-    # TODO Add correct implementation that does not crash with too many users.
+    # TODO Add implementation that does not crash with too much data
     @staticmethod
     def fetch_all(db):
         dict_json_boxes = db.hgetall(TABLE_CARDBOXES)

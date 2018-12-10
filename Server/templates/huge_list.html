@@ -17,6 +17,8 @@
     </div>
 </div>
 
+{{flashed_messages(container=True)}}
+
 <div class="container">
     <br>
     {{quick_form(filter_form)}}
@@ -27,8 +29,6 @@
     <br>
     {{render_pagination(**pagination_kwargs)}}
 </div>
-
-{{flashed_messages(container=True)}}
 
 {% endblock %}
 
